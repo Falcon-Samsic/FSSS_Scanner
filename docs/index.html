@@ -3,138 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEP Registration</title>
-  <!-- Tailwind CSS for styling -->
+  <title>FSSS Login</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    /* Use Inter as the default font */
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    /* Simple animation for the modal */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .modal-fade-in {
-      animation: fadeIn 0.3s ease-out;
-    }
-  </style>
+
+  <!-- SheetJS library to read Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen font-sans text-gray-800 dark:text-gray-200">
 
-  <!-- Main Content Card -->
-  <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Register AEP</h2>
-    <p id="display" class="text-lg text-gray-600 dark:text-gray-400 mb-8 h-12 flex items-center justify-center">Preparing...</p>
-    
-    <!-- Styled NFC Button with new color -->
-    <button id="writeBtn" class="w-full bg-[#D81A60] hover:bg-[#b81652] text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-[#D81A60]/50 dark:focus:ring-[#D81A60]/60 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
-      Tap to Register
-    </button>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
-    <!-- New Close Tab Button -->
-    <button id="closeTabBtn" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full text-lg transition-colors duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-gray-500/50">
-      Close Tab
-    </button>
-  </div>
+  <!-- Login Card -->
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+    <h2 class="text-3xl font-bold mb-6">Login</h2>
 
-  <!-- Custom Modal for Notifications -->
-  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-    <div id="modal-content" class="modal-fade-in bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-sm text-center">
-      <p id="modal-message" class="text-lg mb-6"></p>
-      <button id="modal-close" class="bg-[#D81A60] hover:bg-[#b81652] text-white font-bold py-2 px-6 rounded-full transition-colors duration-300">
-        Close
-      </button>
+    <div class="mb-4 text-left">
+      <label class="font-semibold">User ID</label>
+      <input id="userId" type="text"
+             class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500">
     </div>
+
+    <div class="mb-6 text-left">
+      <label class="font-semibold">Password</label>
+      <input id="password" type="password"
+             class="w-full mt-1 p-3 border rounded-lg focus:ring-blue-500">
+    </div>
+
+    <button id="loginBtn"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg">
+      Login
+    </button>
+
+    <!-- Warning / Success Message -->
+    <p id="message" class="mt-5 font-semibold"></p>
   </div>
 
   <script>
-    // --- DOM Element References ---
-    const displayElement = document.getElementById('display');
-    const writeButton = document.getElementById('writeBtn');
-    const closeTabButton = document.getElementById('closeTabBtn'); // New button reference
-    const modal = document.getElementById('modal');
-    const modalMessage = document.getElementById('modal-message');
-    const modalContent = document.getElementById('modal-content');
-    const modalCloseButton = document.getElementById('modal-close');
+    let credentials = [];
 
-    // --- Utility Functions ---
-    /**
-     * Shows a custom modal with a message.
-     * @param {string} message - The message to display.
-     * @param {boolean} isError - If true, styles the modal as an error.
-     */
-    function showModal(message, isError = false) {
-      modalMessage.textContent = message;
-      // Change color based on success or error
-      if (isError) {
-        modalContent.classList.add('border-t-4', 'border-red-500');
-        modalContent.classList.remove('border-green-500');
+    // Read Excel file on page load
+    fetch("UserCredentials.xlsx")
+      .then(res => res.arrayBuffer())
+      .then(data => {
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        credentials = XLSX.utils.sheet_to_json(sheet); // [{UserID:"FE0072", Password:"1254"}, ...]
+      })
+      .catch(err => {
+        document.getElementById("message").textContent =
+          "❌ Failed to load credentials file.";
+        document.getElementById("message").className = "text-red-600";
+      });
+
+    // Login function
+    document.getElementById("loginBtn").onclick = () => {
+      const userId = document.getElementById("userId").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const message = document.getElementById("message");
+
+      const match = credentials.find(
+        row => row.UserID === userId && row.Password == password
+      );
+
+      if (match) {
+        message.textContent = "✅ Login successful!";
+        message.className = "mt-5 font-semibold text-green-600";
+
+        // Show options or redirect to next page
+        setTimeout(() => {
+          window.location.href = "options.html"; // <-- Create this page if needed
+        }, 800);
+
       } else {
-        modalContent.classList.add('border-t-4', 'border-green-500');
-        modalContent.classList.remove('border-red-500');
-      }
-      modal.classList.remove('hidden');
-    }
-
-    // --- Event Listeners ---
-    // Close the modal when the close button is clicked
-    modalCloseButton.onclick = () => {
-      modal.classList.add('hidden');
-    };
-    // Close the modal when clicking outside the content area
-    modal.onclick = (event) => {
-      if (event.target === modal) {
-        modal.classList.add('hidden');
-      }
-    };
-
-    // New: Handle the close tab button click
-    closeTabButton.onclick = () => {
-      // This will attempt to close the current window/tab.
-      // Note: This may not work in all browsers or contexts, especially if the tab was not opened by a script.
-      window.close();
-    };
-
-    // --- Main Application Logic ---
-    // Grab the "val" parameter from the URL
-    const params = new URLSearchParams(location.search);
-    const val = params.get('val') || '';
-    
-    if (val) {
-        displayElement.textContent = `Value → ${val}`;
-    } else {
-        displayElement.textContent = 'No value provided in URL.';
-    }
-
-
-    // Feature-detect Web NFC
-    if (!('NDEFReader' in window)) {
-      displayElement.textContent = 'Web NFC not supported on this device/browser.';
-      writeButton.disabled = true;
-    }
-
-    // Handle the button click to write to an NFC tag
-    writeButton.onclick = async () => {
-      // Show a message to the user to bring the tag closer
-      showModal("Hold NFC tag near your device to write.", false);
-      try {
-        const ndef = new NDEFReader();
-        // Write the value from the URL parameter
-        await ndef.write(val);
-        // On success, show a success message
-        showModal(`✅ Successfully Written:\n${val}`, false);
-      } catch (e) {
-        // On failure, show an error message
-        console.error('NFC write failed:', e);
-        showModal(`❌ NFC write failed:\n${e.message}`, true);
+        message.textContent = "❌ Invalid UserID or Password.";
+        message.className = "mt-5 font-semibold text-red-600";
       }
     };
   </script>
+
 </body>
 </html>
