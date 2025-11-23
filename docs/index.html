@@ -67,21 +67,26 @@
         row => row.UserID === userId && row.Password == password
       );
 
-      if (match) {
-        message.textContent = "✅ Login successful!";
-        message.className = "mt-5 font-semibold text-green-600";
+if (match) {
+    message.textContent = "✅ Login successful!";
+    message.className = "mt-5 font-semibold text-green-600";
 
-        // Show options or redirect to next page
-        setTimeout(() => {
-          window.location.href = "options.html"; // <-- Create this page if needed
-        }, 800);
+    localStorage.setItem("loggedUser", userId); // Save user for options page
 
-      } else {
+    setTimeout(() => {
+      window.location.href = "options.html";
+    }, 800);
+}
+ else {
         message.textContent = "❌ Invalid UserID or Password.";
         message.className = "mt-5 font-semibold text-red-600";
       }
     };
   </script>
+
+
+
+  
 
 </body>
 </html>
