@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSSS Dashboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white p-10 rounded-2xl shadow-2xl max-w-lg w-full text-center">
+
+    <h2 class="text-3xl font-bold mb-6 text-gray-800">Welcome</h2>
+    <p class="text-gray-600 mb-8">Choose an option below.</p>
+
+    <!-- Option Buttons -->
+    <div class="space-y-4">
+
+      <button onclick="location.href='register.html'"
+        class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-xl text-lg shadow">
+        Register AEP
+      </button>
+
+      <button onclick="location.href='scan.html'"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-lg shadow">
+        Scan NFC
+      </button>
+
+      <button onclick="showProfile()"
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-lg shadow">
+        View Profile
+      </button>
+
+      <button onclick="location.href='settings.html'"
+        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-xl text-lg shadow">
+        Settings
+      </button>
+
+      <button onclick="logout()"
+        class="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 rounded-xl text-lg shadow">
+        Logout
+      </button>
+
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+      <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center shadow-xl">
+        <h3 class="text-2xl font-bold mb-4">User Profile</h3>
+        <p id="profileInfo" class="text-lg text-gray-700 mb-6"></p>
+
+        <button onclick="closeProfile()"
+          class="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-6 rounded-lg shadow">
+          Close
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Load the logged-in user from localStorage
+    const userId = localStorage.getItem("loggedUser") || "Unknown User";
+
+    function showProfile() {
+      document.getElementById("profileInfo").textContent =
+        `Logged in as: ${userId}`;
+      document.getElementById("profileModal").classList.remove("hidden");
+      document.getElementById("profileModal").classList.add("flex");
+    }
+
+    function closeProfile() {
+      document.getElementById("profileModal").classList.add("hidden");
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedUser");
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>
