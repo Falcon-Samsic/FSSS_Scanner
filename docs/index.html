@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FSSS Login</title>
@@ -18,7 +20,12 @@
   <!-- Login Card -->
   <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
     <h2 class="text-3xl font-bold mb-6">Login</h2>
+    
+<input type="text" id="userid" placeholder="Email" />
+<input type="password" id="password" placeholder="Password" />
+<button id="loginBtn">Login</button>
 
+    
     <div class="mb-4 text-left">
       <label class="font-semibold">User ID</label>
       <input id="userId" type="text"
@@ -86,6 +93,62 @@ if (match) {
 
 
 
+
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCf9p4uELdVGevS_4blZLlcZkyHRoxkk-Q",
+    authDomain: "fsss-scanner.firebaseapp.com",
+    projectId: "fsss-scanner",
+    storageBucket: "fsss-scanner.firebasestorage.app",
+    messagingSenderId: "729965198136",
+    appId: "1:729965198136:web:f5db42bf334e81232f5fcd",
+    measurementId: "G-BWRYJZG6B9"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+<script>
+  // your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIza....",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project",
+    appId: "1:12345:web:abcd"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // Handle Login
+  document.getElementById("loginBtn").addEventListener("click", function () {
+    const email = document.getElementById("userid").value;
+    const password = document.getElementById("password").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        alert("Login successful!");
+        // redirect after login
+        window.location.href = "dashboard.html";
+      })
+      .catch((error) => {
+        alert("Error: " + error.message);
+      });
+  });
+</script>
+
+  
   
 
 </body>
